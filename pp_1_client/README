@@ -1,0 +1,33 @@
+			--README: FIFO based client/server chat room--
+
+  BUILD:
+To build, simply type "make". This will load the Makefile and initate the "all" 
+target.
+
+  CLEAN:
+To clean, type "make_clean"
+
+  USE:
+Run the server using the command "./server". This will open the server to 
+receive connections. Once the server opens, in a separate terminal, type
+"./client". This will open the client, which will attempt to connect to the
+server. Upon successful connection user will be prompted to enter a single 
+letter choice. 
+
+'r' will check for (read) the messages that have been sent to
+it. 
+
+'s' prompts the user to enter a message, they may enter any length message
+but it will be truncated to 512 characters (i.e. 512 bytes). Once the user has
+completed the message, the may press CTRL+D to signal EOF. 
+
+'q' will disconnect from the server and then exit.
+
+At any point, the client may press CTRL+C, which will disconnect from the
+server and exit the program.
+
+Similarly, the server can be closed using the CTRL+C
+
+Bug: killing the client process via the "kill -9 <PID>" command will result
+in the server becoming unreachable, presumably locked in a blocking read()
+or write(). So, behaviour for externally killed processes is undefined.

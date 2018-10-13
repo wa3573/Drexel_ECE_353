@@ -1,0 +1,158 @@
+/*
+ * main.c
+ *
+ *  Created on: Jul 25, 2018
+ *      Author: Juniper
+ */
+
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+#include <stdlib.h>
+#include <stdio.h>
+#include <unistd.h>
+#include <string.h>
+#include <errno.h>
+#include "list.h"
+
+#define STD_LEN 128
+
+int compare_pidt(const void* lhs, const void* rhs);
+void free_pidt(void* data);
+
+void free_pidt(void* data)
+{
+	free((pid_t*)data);
+}
+
+int compare_pidt(const void* lhs, const void* rhs)
+{
+	const pid_t* llhs = (const pid_t*)lhs;
+	const pid_t* lrhs = (const pid_t*)rhs;
+
+	if (*llhs < *lrhs)
+	{
+		return -1;
+	} else if (*llhs > *lrhs) {
+		return 1;
+	}
+
+	return 0;
+}
+
+int main(int argc, char** argv)
+{
+	list* L = (list*)malloc(sizeof(list));
+	pid_t pid1;
+	pid_t pid2;
+	pid_t pid3;
+	pid_t pid4;
+
+	L = list_init(L, sizeof(pid_t), free_pidt, compare_pidt);
+
+	pid1 = (pid_t)(1);
+	pid2 = (pid_t)(2);
+	pid3 = (pid_t)(3);
+	pid4 = (pid_t)(4);
+
+	list_push_front(L, &pid1);
+
+	pid_t* pid_front = list_front(L)->data;
+	pid_t* pid_back = list_back(L)->data;
+
+	printf("PID1 = %ld \n", (long)pid1);
+//	printf("Addr of front = %p \n", pid_front);
+	printf("Front = %ld \n", (long)(*pid_front));
+//	printf("Addr of back = %p \n", pid_back);
+	printf("Back = %ld \n\n", (long)(*pid_back));
+
+	list_push_front(L, &pid2);
+
+	pid_front = list_front(L)->data;
+	pid_back = list_back(L)->data;
+
+	printf("PID2 = %ld \n", (long)pid2);
+//	printf("Addr of front = %p \n", pid_front);
+	printf("Front = %ld \n", (long)(*pid_front));
+//	printf("Addr of back = %p \n", pid_back);
+	printf("Back = %ld \n", (long)(*pid_back));
+
+	list_push_front(L, &pid3);
+
+	pid_front = list_front(L)->data;
+	pid_back = list_back(L)->data;
+
+	printf("PID3 = %ld \n", (long)pid3);
+//	printf("Addr of front = %p \n", pid_front);
+	printf("Front = %ld \n", (long)(*pid_front));
+//	printf("Addr of back = %p \n", pid_back);
+	printf("Back = %ld \n", (long)(*pid_back));
+
+	list_push_front(L, &pid4);
+
+	pid_front = list_front(L)->data;
+	pid_back = list_back(L)->data;
+
+	printf("PID4 = %ld \n", (long)pid4);
+//	printf("Addr of front = %p \n", pid_front);
+	printf("Front = %ld \n", (long)(*pid_front));
+//	printf("Addr of back = %p \n", pid_back);
+	printf("Back = %ld \n", (long)(*pid_back));
+
+	if (list_contains(L, &pid2))
+	{
+		printf("L contains pid2! \n");
+	} else {
+		printf("L does not contain pid2! \n");
+	}
+
+	printf("logical length = %d \n", L->logical_length);
+
+	printf("popping front... \n");
+	list_pop_front(L);
+
+	pid_front = list_front(L)->data;
+	pid_back = list_back(L)->data;
+
+	printf("Front = %ld \n", (long)(*pid_front));
+	printf("Back = %ld \n", (long)(*pid_back));
+
+	printf("popping back... \n");
+	list_pop_back(L);
+
+	pid_front = list_front(L)->data;
+	pid_back = list_back(L)->data;
+
+	printf("Front = %ld \n", (long)(*pid_front));
+	printf("Back = %ld \n", (long)(*pid_back));
+
+	printf("Removing 3... \n");
+	list_remove_pid(L, &pid3);
+
+	pid_front = list_front(L)->data;
+	pid_back = list_back(L)->data;
+
+	printf("Front = %ld \n", (long)(*pid_front));
+	printf("Back = %ld \n", (long)(*pid_back));
+
+	printf("Removing 2... \n");
+	list_remove_pid(L, &pid2);
+
+	pid_front = list_front(L)->data;
+	pid_back = list_back(L)->data;
+
+	printf("Addr of front pid = %p \n", pid_front);
+	printf("Addr of back pid = %p \n", pid_back);
+
+	if (list_contains(L, &pid2))
+	{
+		printf("L contains pid2! \n");
+	} else {
+		printf("L does not contain pid2! \n");
+	}
+
+	printf("logical length = %d \n", L->logical_length);
+
+	exit(EXIT_SUCCESS);
+}
+
